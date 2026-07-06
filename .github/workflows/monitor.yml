@@ -1,0 +1,40 @@
+name: 成绩监控
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装Chrome
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq google-chrome-stable 2>/dev/null || true
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 查询成绩
+        env:
+          ZF_USERNAME: ${{ secrets.ZF_USERNAME }}
+          ZF_PASSWORD: ${{ secrets.ZF_PASSWORD }}
+          WXPUSHER_TOKEN: ${{ secrets.WXPUSHER_TOKEN }}
+          WXPUSHER_UID: ${{ secrets.WXPUSHER_UID }}
+        run: python monitor.py
+
+      - name: 保存记录
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@github.com"
+          git add grades_history.json
+          git diff --staged --quiet || git commit -m "update grades"
+          git push
