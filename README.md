@@ -1,6 +1,6 @@
 # 正方教务系统成绩监控（河南工业大学）
 
-每2小时自动查询教务系统成绩，有变化通过微信推送通知。无需服务器，无需电脑开机，完全免费。
+每2小时自动查询教务系统成绩，有变化通过 WxPusher App 推送通知到手机。无需服务器，无需电脑开机，完全免费。
 
 ## 一键部署（5分钟）
 
@@ -10,14 +10,15 @@
 
 ### 第二步：注册 WxPusher 获取推送
 
-> 注意：仅关注公众号不够，必须扫码订阅自己创建的应用
+> 注意：必须下载 WxPusher App 才能收到推送，仅关注公众号无效！
 
-1. 微信搜索公众号 **WxPusher** → 关注
-2. 打开 https://wxpusher.zjiecode.com/ → 微信扫码登录
-3. 点击 **应用管理** → **新建应用**（名称随意，如"成绩通知"）
-4. 复制你的 **AppToken**（格式：）
-5. 点击应用详情页的 **关注** 按钮 → 弹出二维码 → **用微信扫码**（这一步最关键！扫码后才能在微信收到推送）
-6. 回到公众号对话框，发送 **我的UID** → 复制返回的 UID（格式：）
+1. 在手机应用商店搜索 **WxPusher** 并下载安装
+2. 打开 WxPusher App → 微信登录
+3. 打开 https://wxpusher.zjiecode.com/ → 微信扫码登录
+4. 点击 **应用管理** → **新建应用**（名称随意，如"成绩通知"）
+5. 复制你的 **AppToken**（格式：`AT_xxxxxxxx`）
+6. 在应用详情页点击 **关注** → 弹出二维码 → **用 WxPusher App 扫码订阅**
+7. 在 App 中查看 **我的UID**（格式：`UID_xxxxxxxx`）
 
 ### 第三步：设置 GitHub Secrets
 
@@ -26,17 +27,17 @@
 
 | Name | Value |
 |------|-------|
-|  | 你的学号 |
-|  | 教务系统密码 |
-|  | 第二步的 AppToken（ 开头） |
-|  | 第二步的 UID（ 开头） |
+| `ZF_USERNAME` | 你的学号 |
+| `ZF_PASSWORD` | 教务系统密码 |
+| `WXPUSHER_TOKEN` | 第二步的 AppToken |
+| `WXPUSHER_UID` | 第二步的 UID |
 
 ### 第四步：启动
 
 1. 打开仓库的 **Actions** 标签页
 2. 点击 **I understand my workflows, go ahead and enable them**
 3. 点击左侧 **成绩监控** → **Run workflow** → **Run workflow**
-4. 等2分钟，检查微信 WxPusher 公众号是否收到成绩列表
+4. 等2分钟，检查 WxPusher App 是否收到成绩推送
 
 ---
 
@@ -59,14 +60,14 @@
 **Q: 安全吗？**
 A: 学号和密码存在你自己的私有仓库 Secrets 中，GitHub 加密存储。
 
-**Q: 没收到微信通知？**
-A: 检查第二步第5步 —— 必须在 WxPusher 应用详情页点击"关注"并扫码，仅关注公众号是不够的。
+**Q: 没收到推送通知？**
+A: 检查：(1) 是否下载了 WxPusher App（仅关注公众号无效）；(2) 是否在应用详情页扫码订阅了该应用。
 
 **Q: 换了教务密码怎么办？**
-A: 到仓库 Settings → Secrets → 更新 。
+A: 到仓库 Settings → Secrets → 更新 `ZF_PASSWORD`。
 
 **Q: 能改查询频率吗？**
-A: 编辑  修改 cron，编辑  修改 。
+A: 编辑 `.github/workflows/monitor.yml` 修改 cron，编辑 `monitor.py` 修改 `CHECK_INTERVAL`。
 
 **Q: 其他学校能用吗？**
-A: 如果也是正方系统（URL 含 ），Fork 后修改  中的  即可。
+A: 如果也是正方系统（URL 含 `jwglxt`），Fork 后修改 `monitor.py` 中的 `ZF_BASE_URL` 即可。
