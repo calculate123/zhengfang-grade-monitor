@@ -2,7 +2,7 @@ name: 成绩监控
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "7,37 * * * *"  # 每小时两次，即便延迟也保证覆盖
   workflow_dispatch:
 
 jobs:
@@ -35,6 +35,6 @@ jobs:
         run: |
           git config user.name "bot"
           git config user.email "bot@github.com"
-          git add grades_history.json
+          git add grades_history.json last_check.txt
           git diff --staged --quiet || git commit -m "update grades"
           git push
