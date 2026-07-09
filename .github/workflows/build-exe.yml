@@ -1,8 +1,6 @@
 name: 构建 EXE
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -22,16 +20,10 @@ jobs:
         run: pip install pyinstaller pynacl requests
 
       - name: 打包 EXE
-        run: pyinstaller --onefile --windowed --name "成绩监控" --add-data "monitor.py;." --add-data "requirements.txt;." app.py
+        run: pyinstaller --onefile --windowed --name "grade-monitor" --add-data "monitor.py;." --add-data "requirements.txt;." app.py
 
       - name: 上传 EXE
         uses: actions/upload-artifact@v4
         with:
-          name: 成绩监控
-          path: dist/成绩监控.exe
-
-      - name: 上传 Release
-        run: |
-          gh release create v2.0 dist/成绩监控.exe --title "成绩监控 v2.0" --notes "双击运行，输入学号密码和WxPusher信息即可一键配置。之后每2小时自动检查成绩。" --clobber
-        env:
-          GH_TOKEN: ${{ github.token }}
+          name: grade-monitor
+          path: dist/grade-monitor.exe
