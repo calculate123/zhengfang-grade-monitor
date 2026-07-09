@@ -17,10 +17,10 @@ jobs:
           python-version: "3.11"
 
       - name: 安装依赖
-        run: pip install pyinstaller pynacl requests
+        run: pip install pyinstaller pynacl requests cffi
 
       - name: 打包 EXE
-        run: pyinstaller --onefile --windowed --name "grade-monitor" --add-data "monitor.py;." --add-data "requirements.txt;." app.py
+        run: pyinstaller --onefile --windowed --name "grade-monitor" --add-data "monitor.py;." --add-data "requirements.txt;." --hidden-import _cffi_backend --hidden-import nacl.bindings.crypto_aead --hidden-import nacl.bindings.crypto_box --hidden-import nacl.bindings.crypto_secretbox --hidden-import nacl.bindings.randombytes app.py
 
       - name: 上传 EXE
         uses: actions/upload-artifact@v4
