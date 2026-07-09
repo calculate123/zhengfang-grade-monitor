@@ -23,6 +23,8 @@ CONFIG = {
 }
 
 GRADES_FILE = "grades_history.json"
+LAST_CHECK_FILE = "last_check.txt"
+CHECK_INTERVAL = 2  # 小时
 
 
 def notify(title, content):
@@ -163,8 +165,31 @@ def format_msg(changes):
     return msg
 
 
+def should_check():
+    """距上次检查超过2小时才执行"""
+    try:
+        with open(LAST_CHECK_FILE, "r") as f:
+            last = datetime.fromisoformat(f.read().strip())
+        elapsed = (datetime.now() - last).total_seconds() / 3600
+        if elapsed < CHECK_INTERVAL:
+            print(f"[跳过] 距上次检查仅 {elapsed:.1f} 小时 < {CHECK_INTERVAL}h")
+            return False
+    except (FileNotFoundError, ValueError):
+        pass
+    return True
+
+
+def update_last_check():
+    with open(LAST_CHECK_FILE, "w") as f:
+        f.write(datetime.now().isoformat())
+
+
 def main():
     print(f"[{datetime.now()}] 开始检查...")
+
+    if not should_check():
+        return  # 跳过，更新last_check文件方便下次判断
+
     driver = setup_driver()
 
     try:
@@ -183,6 +208,7 @@ def main():
 
         if not old:
             save_history(new_dict)
+            update_last_check()
             lines = "\n".join([f"- {g['kcmc']}: {g['cj']}分" for g in grades])
             notify("📚 成绩监控已启动", f"共 {len(grades)} 条:\n\n{lines}")
             print("首次运行，已保存")
@@ -199,6 +225,7 @@ def main():
             print("无变化")
 
         save_history(new_dict)
+        update_last_check()
     finally:
         driver.quit()
 
