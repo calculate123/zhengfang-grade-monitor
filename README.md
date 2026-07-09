@@ -1,12 +1,30 @@
 # 正方教务系统成绩监控（河南工业大学）
 
+[![GitHub](https://img.shields.io/badge/GitHub%20Template-Use%20this%20template-blue)](https://github.com/calculate123/zhengfang-grade-monitor/generate)
+[![License](https://img.shields.io/github/license/calculate123/zhengfang-grade-monitor)](LICENSE)
+
 每2小时自动查询教务系统成绩，有变化通过 WxPusher App 推送通知到手机。无需服务器，无需电脑开机，完全免费。
 
-## 一键部署（5分钟）
+---
 
-### 第一步：Fork 本仓库
+## 方式A：一键配置（推荐）
 
-点击右上角 **Fork** → **Create fork**
+1. 点击上方 **Use this template** 按钮 → Create a new repository → **务必选 Private**
+2. 克隆你的仓库到本地，打开终端运行：
+```
+pip install -r requirements-wizard.txt
+python wizard.py
+```
+3. 按提示输入学号、密码、WxPusher AppToken/UID
+4. 脚本自动配置 Secrets 并触发首次检查 —— **之后无需任何操作**
+
+---
+
+## 方式B：手动配置
+
+### 第一步：创建仓库
+
+点击右上角 **Use this template** → **Create a new repository** → 务必选 **Private**
 
 ### 第二步：注册 WxPusher 获取推送
 
