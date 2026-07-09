@@ -5,6 +5,9 @@ on:
     branches: [master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -27,16 +30,8 @@ jobs:
           name: 成绩监控
           path: dist/成绩监控.exe
 
-      - name: 创建 Release
-        if: github.ref == 'refs/heads/master'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v2.0
-          name: "成绩监控 v2.0"
-          files: dist/成绩监控.exe
-          body: |
-            双击运行，输入学号密码和 WxPusher Token/UID，点击一键配置即可。
-
-            之后每2小时自动查成绩，变化推送到手机。电脑关机不受影响。
+      - name: 上传 Release
+        run: |
+          gh release create v2.0 dist/成绩监控.exe --title "成绩监控 v2.0" --notes "双击运行，输入学号密码和WxPusher信息即可一键配置。之后每2小时自动检查成绩。" --clobber
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
