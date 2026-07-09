@@ -1,6 +1,6 @@
 # 正方教务系统成绩监控（河南工业大学）
 
-每2小时自动查询教务系统成绩，有变化通过微信推送通知。**无需服务器，无需电脑开机。**
+每2小时自动查询教务系统成绩，有变化通过微信推送通知。**无需服务器，无需电脑开机，完全免费。**
 
 ## 一键部署（5分钟）
 
@@ -12,49 +12,59 @@
 
 1. 微信搜索公众号 **"WxPusher"** → 关注
 2. 打开 https://wxpusher.zjiecode.com/ → 微信扫码登录
-3. 点击 **"应用管理"** → **"新建应用"**（名称随意）
-4. 复制 **AppToken**（AT_开头）
+3. 点击 **"应用管理"** → **"新建应用"**（名称随意，如"成绩通知"）
+4. 复制 **AppToken**（AT_ 开头）
 5. 点击 **"关注"** → 用微信扫码关注此应用
-6. 在公众号对话框回复 **"我的UID"** → 复制 UID
+6. 在公众号对话框发送 **"我的UID"** → 复制返回的 UID
 
-### 第三步：设置GitHub Secrets
+### 第三步：设置 GitHub Secrets
 
 1. 打开你 Fork 的仓库 → **Settings** → **Secrets and variables** → **Actions**
-2. 点击 **New repository secret**，依次添加4个：
+2. 点击 **New repository secret**，依次添加以下4个：
 
 | Name | Value |
 |------|-------|
-| `ZF_USERNAME` | 你的学号 |
-| `ZF_PASSWORD` | 教务系统密码 |
-| `WXPUSHER_TOKEN` | 第二步获得的 AppToken |
-| `WXPUSHER_UID` | 第二步获得的 UID |
+|  | 你的学号 |
+|  | 教务系统密码 |
+|  | 第二步获得的 AppToken（AT_ 开头） |
+|  | 第二步获得的 UID（UID_ 开头） |
 
 ### 第四步：启动
 
-打开仓库的 **Actions** 标签页 → 点击 **I understand my workflows, go ahead and enable them**
-
-然后进入 **成绩监控** workflow → **Run workflow** → 手动触发一次测试。
+1. 打开仓库的 **Actions** 标签页
+2. 点击 **"I understand my workflows, go ahead and enable them"**
+3. 点击左侧 **"成绩监控"** → **"Run workflow"** → 手动触发一次测试
+4. 等2分钟，查看你的微信是否收到成绩列表
 
 ---
 
 ## 效果
 
-- **首次**：推送当前所有成绩
-- **之后每2小时**：
-  - 无变化 → 推送 "1"
-  - 有新成绩/成绩变化 → 推送详情
+-   **首次运行**：推送当前所有成绩
+-   **之后每2小时**：
+    -   无变化 → 推送 "1"
+    -   有新成绩或成绩变化 → 推送详细变化
+
+## 工作原理
+
+-   脚本运行在 **GitHub 云端服务器**，你的电脑关机不受影响
+-   每30分钟触发一次检查，但内置间隔过滤保证实际查询间隔为2小时
+-   密码存储在 GitHub Secrets 中，加密保存，任何人看不到
+-   完全免费，GitHub Actions 免费额度远超使用需求
 
 ## 常见问题
 
-**Q: 安全吗？密码存在哪？**
-A: 密码存在你自己的 GitHub 仓库 Secrets 里（不是我们的服务器），GitHub 会加密存储。
+**Q: 安全吗？密码会被别人看到吗？**
+A: 密码存在你自己的 GitHub 仓库 Secrets 里，GitHub 加密存储，包括你自己都只能写入不能读取明文。
 
-**Q: 免费吗？**
-A: 完全免费。GitHub Actions 免费额度足够。
+**Q: 需要花钱吗？**
+A: 完全免费。GitHub Actions 每月2000分钟免费额度，本脚本每月只用约60分钟。
 
 **Q: 能改查询频率吗？**
-A: 编辑 `.github/workflows/monitor.yml`，修改 `cron: "0 */2 * * *"` 中的数字（小时）。
+A: 编辑 ，修改 cron 表达式和  变量即可。
 
-## 适配其他学校
+**Q: 换了学校密码怎么办？**
+A: 到 GitHub 仓库 Settings → Secrets 里更新  即可。
 
-如果你的学校也用正方系统，修改 `monitor.py` 中的 `ZF_BASE_URL` 即可。
+**Q: 其它学校能用吗？**
+A: 如果也是正方教务系统（URL 中包含 ），Fork 后修改  开头的  即可。
